@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.BizDevelopMapper">
+    
+    <resultMap type="BizDevelopVo" id="BizDevelopResult">
+        <result property="id"    column="id"    />
+        <result property="title"    column="title"    />
+        <result property="productName"    column="product_name"    />
+        <result property="sku"    column="sku"    />
+        <result property="sellingPoint"    column="selling_point"    />
+        <result property="painPoint"    column="pain_point"    />
+        <result property="instanceId"    column="instance_id"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="applyUser"    column="apply_user"    />
+        <result property="applyTime"    column="apply_time"    />
+    </resultMap>
+
+    <sql id="selectBizDevelopVo">
+        select id, title, product_name, sku, selling_point, pain_point, instance_id, create_by, create_time, update_by, update_time, apply_user, apply_time from biz_develop
+    </sql>
+
+    <select id="selectBizDevelopList" parameterType="BizDevelopVo" resultMap="BizDevelopResult">
+        <include refid="selectBizDevelopVo"/>
+        <where>  
+            <if test="title != null  and title != ''"> and title = #{title}</if>
+            <if test="productName != null  and productName != ''"> and product_name like concat('%', #{productName}, '%')</if>
+            <if test="sku != null  and sku != ''"> and sku = #{sku}</if>
+            <if test="sellingPoint != null  and sellingPoint != ''"> and selling_point = #{sellingPoint}</if>
+            <if test="painPoint != null  and painPoint != ''"> and pain_point = #{painPoint}</if>
+            <if test="instanceId != null  and instanceId != ''"> and instance_id = #{instanceId}</if>
+            <if test="applyUser != null  and applyUser != ''"> and apply_user = #{applyUser}</if>
+            <if test="applyTime != null "> and apply_time = #{applyTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectBizDevelopById" parameterType="Long" resultMap="BizDevelopResult">
+        <include refid="selectBizDevelopVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertBizDevelop" parameterType="BizDevelopVo" useGeneratedKeys="true" keyProperty="id">
+        insert into biz_develop
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="title != null  and title != ''">title,</if>
+            <if test="productName != null  and productName != ''">product_name,</if>
+            <if test="sku != null  and sku != ''">sku,</if>
+            <if test="sellingPoint != null  and sellingPoint != ''">selling_point,</if>
+            <if test="painPoint != null  and painPoint != ''">pain_point,</if>
+            <if test="instanceId != null  and instanceId != ''">instance_id,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="applyUser != null  and applyUser != ''">apply_user,</if>
+            <if test="applyTime != null ">apply_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="title != null  and title != ''">#{title},</if>
+            <if test="productName != null  and productName != ''">#{productName},</if>
+            <if test="sku != null  and sku != ''">#{sku},</if>
+            <if test="sellingPoint != null  and sellingPoint != ''">#{sellingPoint},</if>
+            <if test="painPoint != null  and painPoint != ''">#{painPoint},</if>
+            <if test="instanceId != null  and instanceId != ''">#{instanceId},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="applyUser != null  and applyUser != ''">#{applyUser},</if>
+            <if test="applyTime != null ">#{applyTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBizDevelop" parameterType="BizDevelopVo">
+        update biz_develop
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="title != null  and title != ''">title = #{title},</if>
+            <if test="productName != null  and productName != ''">product_name = #{productName},</if>
+            <if test="sku != null  and sku != ''">sku = #{sku},</if>
+            <if test="sellingPoint != null  and sellingPoint != ''">selling_point = #{sellingPoint},</if>
+            <if test="painPoint != null  and painPoint != ''">pain_point = #{painPoint},</if>
+            <if test="instanceId != null  and instanceId != ''">instance_id = #{instanceId},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="applyUser != null  and applyUser != ''">apply_user = #{applyUser},</if>
+            <if test="applyTime != null ">apply_time = #{applyTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBizDevelopById" parameterType="Long">
+        delete from biz_develop where id = #{id}
+    </delete>
+
+    <delete id="deleteBizDevelopByIds" parameterType="String">
+        delete from biz_develop where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>
