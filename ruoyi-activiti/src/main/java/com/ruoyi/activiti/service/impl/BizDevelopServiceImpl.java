@@ -2,6 +2,7 @@ package com.ruoyi.activiti.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.github.pagehelper.Page;
 import com.ruoyi.activiti.domain.BizDevelopVo;
@@ -238,5 +239,22 @@ public class BizDevelopServiceImpl implements IBizDevelopService
     public int deleteBizDevelopById(Long id)
     {
         return bizDevelopMapper.deleteBizDevelopById(id);
+    }
+
+    /**
+     * 完成任务
+     * @param developVo
+     * @param saveEntity
+     * @param taskId
+     * @param variables
+     */
+    @Override
+    public void complete(BizDevelopVo developVo, Boolean saveEntity, String taskId, Map<String, Object> variables) {
+        if (saveEntity) {
+            bizDevelopMapper.updateBizDevelop(developVo);
+        }
+        // 只有签收任务，act_hi_taskinst 表的 assignee 字段才不为 null
+        taskService.claim(taskId, ShiroUtils.getLoginName());
+        taskService.complete(taskId, variables);
     }
 }

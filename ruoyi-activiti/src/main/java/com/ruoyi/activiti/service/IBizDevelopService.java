@@ -6,6 +6,7 @@ import com.ruoyi.activiti.domain.BizLeaveVo;
 import org.activiti.engine.runtime.ProcessInstance;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 开发业务Service接口
@@ -77,4 +78,14 @@ public interface IBizDevelopService
      * @return 结果
      */
     public int deleteBizDevelopById(Long id);
+
+
+    /**
+     * 完成任务
+     * @param developVo
+     * @param saveEntity
+     * @param taskId
+     * @param variables
+     */
+    void complete(BizDevelopVo developVo, Boolean saveEntity, String taskId, Map<String, Object> variables);
 }
