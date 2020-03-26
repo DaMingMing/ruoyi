@@ -44,7 +44,10 @@ public class SellerConfirmEndProcessor implements TaskListener {
         Object realityEndTime = delegateTask.getVariable("realityEndTime");
         leave.setRealityEndTime((Date) realityEndTime);
         bizLeaveService.updateBizLeave(leave);*/
-        System.out.println("------------------notify----------------");
+
+        String sku = (String) delegateTask.getVariable("sku");
+        String productName = (String)delegateTask.getVariable("productName");
+        System.out.println(sku + "------------------notify----------------" + productName);
     }
 
 }

@@ -203,7 +203,15 @@ public class BizDevelopController extends BaseController
                 identityService.setAuthenticatedUserId(ShiroUtils.getLoginName());
                 taskService.addComment(taskId, develop.getInstanceId(), comment);
             }
+            //设置流程变量产品信息传递到监听器
+            if(saveEntityBoolean){
+                variables.put("sku",develop.getSku());
+                variables.put("productName",develop.getProductName());
+            }
+
+
             bizDevelopService.complete(develop, saveEntityBoolean, taskId, variables);
+
 
             return success("任务已完成");
         } catch (Exception e) {
