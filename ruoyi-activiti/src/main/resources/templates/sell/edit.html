@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('修改销售业务')" />
+    <th:block th:include="include :: datetimepicker-css" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-sell-edit" th:object="${bizSell}">
+            <input name="id" th:field="*{id}" type="hidden">
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">标题：</label>
+                <div class="col-sm-8">
+                    <input name="title" th:field="*{title}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">产品名称：</label>
+                <div class="col-sm-8">
+                    <input name="productName" th:field="*{productName}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">SKU：</label>
+                <div class="col-sm-8">
+                    <input name="sku" th:field="*{sku}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">市场调研：</label>
+                <div class="col-sm-8">
+                    <textarea name="marketResearch" class="form-control">[[*{marketResearch}]]</textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">卖点分析：</label>
+                <div class="col-sm-8">
+                    <textarea name="sellingPointAna" class="form-control">[[*{sellingPointAna}]]</textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">痛点分析：</label>
+                <div class="col-sm-8">
+                    <textarea name="painPointAna" class="form-control">[[*{painPointAna}]]</textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">销售策略：</label>
+                <div class="col-sm-8">
+                    <textarea name="sellStrategy" class="form-control">[[*{sellStrategy}]]</textarea>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">keywords：</label>
+                <div class="col-sm-8">
+                    <input name="keywords" th:field="*{keywords}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">5point：</label>
+                <div class="col-sm-8">
+                    <textarea name="fivepoint" class="form-control">[[*{fivepoint}]]</textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">description：</label>
+                <div class="col-sm-8">
+                    <textarea name="description" class="form-control">[[*{description}]]</textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">图需：</label>
+                <div class="col-sm-8">
+                    <textarea name="photoNeed" class="form-control">[[*{photoNeed}]]</textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">运营计划：</label>
+                <div class="col-sm-8">
+                    <textarea name="businessPlan" class="form-control">[[*{businessPlan}]]</textarea>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">流程实例ID：</label>
+                <div class="col-sm-8">
+                    <input name="instanceId" th:field="*{instanceId}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">申请人：</label>
+                <div class="col-sm-8">
+                    <input name="applyUser" th:field="*{applyUser}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">申请时间：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        <input name="applyTime" th:value="${#dates.format(bizSell.applyTime, 'yyyy-MM-dd')}" class="form-control" placeholder="yyyy-MM-dd" type="text">
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: datetimepicker-js" />
+    <script type="text/javascript">
+        var prefix = ctx + "activiti/sell";
+        $("#form-sell-edit").validate({
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/edit", $('#form-sell-edit').serialize());
+            }
+        }
+
+        $("input[name='applyTime']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+    </script>
+</body>
+</html>

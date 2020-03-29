@@ -1,7 +1,12 @@
 package com.ruoyi.activiti.service.impl;
 
 import com.ruoyi.activiti.domain.BizLeaveVo;
+import com.ruoyi.activiti.domain.BizSellVo;
 import com.ruoyi.activiti.service.IBizLeaveService;
+import com.ruoyi.activiti.service.IBizSellService;
+import com.ruoyi.framework.util.ShiroUtils;
+import com.ruoyi.system.domain.SysUser;
+import com.ruoyi.system.mapper.SysUserMapper;
 import org.activiti.engine.delegate.DelegateTask;
 import org.activiti.engine.delegate.TaskListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +35,13 @@ public class SellerConfirmEndProcessor implements TaskListener {
     @Autowired
     IBizLeaveService bizLeaveService;
 
+
+    @Autowired
+    private IBizSellService bizSellService;
+
+    @Autowired
+    private SysUserMapper userMapper;
+
     /*
      * (non-Javadoc)
      *
@@ -44,9 +56,26 @@ public class SellerConfirmEndProcessor implements TaskListener {
         Object realityEndTime = delegateTask.getVariable("realityEndTime");
         leave.setRealityEndTime((Date) realityEndTime);
         bizLeaveService.updateBizLeave(leave);*/
+        //String loginName = ShiroUtils.getLoginName();
 
+        //自动触发销售流程
+        //1、往销售业务表插入数据
+        BizSellVo bizSell = new BizSellVo();
+        String assignee = delegateTask.getAssignee();
         String sku = (String) delegateTask.getVariable("sku");
         String productName = (String)delegateTask.getVariable("productName");
+        String title = (String)delegateTask.getVariable("title");
+        bizSell.setSku(sku);
+        bizSell.setTitle(title);
+        bizSell.setProductName(productName);
+        int i = bizSellService.insertBizSell(bizSell);
+        //2、启动销售流程
+        SysUser sysUser = userMapper.selectUserByLoginName(assignee);
+        if (sysUser != null) {
+            bizSell.setApplyUserName(sysUser.getUserName());
+        }
+        String applyUserId = ShiroUtils.getLoginName();
+        bizSellService.submitApply(bizSell, applyUserId);
         System.out.println(sku + "------------------notify----------------" + productName);
     }
 

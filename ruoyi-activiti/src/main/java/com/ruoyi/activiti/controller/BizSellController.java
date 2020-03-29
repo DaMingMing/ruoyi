@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.ruoyi.activiti.domain.BizDevelopVo;
-import com.ruoyi.activiti.domain.BizLeaveVo;
+import com.ruoyi.activiti.domain.BizSellVo;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.framework.util.ShiroUtils;
 import com.ruoyi.system.domain.SysUser;
@@ -24,8 +24,8 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.enums.BusinessType;
-import com.ruoyi.activiti.domain.BizDevelop;
-import com.ruoyi.activiti.service.IBizDevelopService;
+import com.ruoyi.activiti.domain.BizSell;
+import com.ruoyi.activiti.service.IBizSellService;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.poi.ExcelUtil;
@@ -35,19 +35,19 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 /**
- * 开发业务Controller
+ * 销售业务Controller
  * 
  * @author xiaojm
- * @date 2020-03-21
+ * @date 2020-03-27
  */
 @Controller
-@RequestMapping("/develop")
-public class BizDevelopController extends BaseController
+@RequestMapping("/sell")
+public class BizSellController extends BaseController
 {
-    private String prefix = "develop";
+    private String prefix = "sell";
 
     @Autowired
-    private IBizDevelopService bizDevelopService;
+    private IBizSellService bizSellService;
 
     @Autowired
     private TaskService taskService;
@@ -59,53 +59,54 @@ public class BizDevelopController extends BaseController
     private IdentityService identityService;
 
     @GetMapping()
-    public String develop(ModelMap mmap){
+    public String sell(ModelMap mmap) {
         mmap.put("currentUser", ShiroUtils.getSysUser());
-        return prefix + "/develop";
+        return prefix + "/sell";
     }
 
     /**
-     * 查询开发业务列表
+     * 查询销售业务列表
      */
+
     @PostMapping("/list")
     @ResponseBody
-    public TableDataInfo list(BizDevelopVo bizDevelop) {
+    public TableDataInfo list(BizSellVo bizSell){
         if (!SysUser.isAdmin(ShiroUtils.getUserId())) {
-            bizDevelop.setCreateBy(ShiroUtils.getLoginName());
+            bizSell.setCreateBy(ShiroUtils.getLoginName());
         }
         startPage();
-        List<BizDevelopVo> list = bizDevelopService.selectBizDevelopList(bizDevelop);
+        List<BizSellVo> list = bizSellService.selectBizSellList(bizSell);
         return getDataTable(list);
     }
 
     /**
      * 提交申请
      */
-    @Log(title = "开发业务", businessType = BusinessType.UPDATE)
+    @Log(title = "销售业务", businessType = BusinessType.UPDATE)
     @PostMapping( "/submitApply")
     @ResponseBody
     public AjaxResult submitApply(Long id) {
-        BizDevelopVo developVo = bizDevelopService.selectBizDevelopById(id);
+        BizSellVo sellVo = bizSellService.selectBizSellById(id);
         String applyUserId = ShiroUtils.getLoginName();
-        bizDevelopService.submitApply(developVo, applyUserId);
+        bizSellService.submitApply(sellVo, applyUserId);
         return success();
     }
 
-    @GetMapping("/developTodo")
+    @GetMapping("/sellTodo")
     public String todoView() {
-        return prefix + "/developTodo";
+        return prefix + "/sellTodo";
     }
 
     /**
-     * 我的开发待办列表
-     * @param bizDevelop
+     * 我的销售待办列表
+     * @param bizSell
      * @return
      */
-    @PostMapping("/devTaskList")
+    @PostMapping("/sellTaskList")
     @ResponseBody
-    public TableDataInfo taskList(BizDevelopVo bizDevelop) {
+    public TableDataInfo taskList(BizSellVo bizSell) {
         startPage();
-        List<BizDevelopVo> list = bizDevelopService.findTodoTasks(bizDevelop, ShiroUtils.getLoginName());
+        List<BizSellVo> list = bizSellService.findTodoTasks(bizSell, ShiroUtils.getLoginName());
         return getDataTable(list);
     }
 
@@ -120,48 +121,12 @@ public class BizDevelopController extends BaseController
         Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
         String processInstanceId = task.getProcessInstanceId();
         ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().processInstanceId(processInstanceId).singleResult();
-        BizDevelopVo bizDevelop = bizDevelopService.selectBizDevelopById(new Long(processInstance.getBusinessKey()));
-        mmap.put("bizDevelop", bizDevelop);
+        BizSellVo bizSell = bizSellService.selectBizSellById(new Long(processInstance.getBusinessKey()));
+        mmap.put("bizSell", bizSell);
         mmap.put("taskId", taskId);
         String verifyName = task.getTaskDefinitionKey().substring(0, 1).toUpperCase() + task.getTaskDefinitionKey().substring(1);
         return prefix + "/task" + verifyName;
     }
-    /**
-     * 导出开发业务列表
-     */
-    @Log(title = "开发业务", businessType = BusinessType.EXPORT)
-    @PostMapping("/export")
-    @ResponseBody
-    public AjaxResult export(BizDevelopVo bizDevelop)
-    {
-        List<BizDevelopVo> list = bizDevelopService.selectBizDevelopList(bizDevelop);
-        ExcelUtil<BizDevelopVo> util = new ExcelUtil<BizDevelopVo>(BizDevelopVo.class);
-        return util.exportExcel(list, "develop");
-    }
-
-    /**
-     * 新增开发业务
-     */
-    @GetMapping("/add")
-    public String add()
-    {
-        return prefix + "/add";
-    }
-
-    /**
-     * 新增保存开发业务
-     */
-    @Log(title = "开发", businessType = BusinessType.INSERT)
-    @PostMapping("/add")
-    @ResponseBody
-    public AjaxResult addSave(BizDevelopVo bizDevelop){
-        Long userId = ShiroUtils.getUserId();
-        if (SysUser.isAdmin(userId)) {
-            return error("提交申请失败：不允许管理员提交申请！");
-        }
-        return toAjax(bizDevelopService.insertBizDevelop(bizDevelop));
-    }
-
 
     /**
      * 完成任务
@@ -171,7 +136,7 @@ public class BizDevelopController extends BaseController
     @RequestMapping(value = "/complete/{taskId}", method = {RequestMethod.POST, RequestMethod.GET})
     @ResponseBody
     public AjaxResult complete(@PathVariable("taskId") String taskId, @RequestParam(value = "saveEntity", required = false) String saveEntity,
-                               @ModelAttribute("preloadDevelop") BizDevelopVo develop, HttpServletRequest request) {
+                               @ModelAttribute("preloadSell") BizSellVo sellVo, HttpServletRequest request) {
         boolean saveEntityBoolean = BooleanUtils.toBoolean(saveEntity);
         Map<String, Object> variables = new HashMap<String, Object>();
         Enumeration<String> parameterNames = request.getParameterNames();
@@ -201,17 +166,16 @@ public class BizDevelopController extends BaseController
             }
             if (StringUtils.isNotEmpty(comment)) {
                 identityService.setAuthenticatedUserId(ShiroUtils.getLoginName());
-                taskService.addComment(taskId, develop.getInstanceId(), comment);
+                taskService.addComment(taskId, sellVo.getInstanceId(), comment);
             }
             //设置流程变量产品信息传递到监听器
             if(saveEntityBoolean){
-                variables.put("sku",develop.getSku());
-                variables.put("productName",develop.getProductName());
-                variables.put("title",develop.getTitle());
+                variables.put("sku",sellVo.getSku());
+                variables.put("productName",sellVo.getProductName());
             }
 
 
-            bizDevelopService.complete(develop, saveEntityBoolean, taskId, variables);
+            bizSellService.complete(sellVo, saveEntityBoolean, taskId, variables);
 
 
             return success("任务已完成");
@@ -224,44 +188,82 @@ public class BizDevelopController extends BaseController
     /**
      * 自动绑定页面字段
      */
-    @ModelAttribute("preloadDevelop")
-    public BizDevelopVo getDevelop(@RequestParam(value = "id", required = false) Long id, HttpSession session) {
+    @ModelAttribute("preloadSell")
+    public BizSellVo getSell(@RequestParam(value = "id", required = false) Long id, HttpSession session) {
         if (id != null) {
-            return bizDevelopService.selectBizDevelopById(id);
+            return bizSellService.selectBizSellById(id);
         }
-        return new BizDevelopVo();
+        return new BizSellVo();
     }
 
     /**
-     * 修改开发业务
+     * 导出销售业务列表
+     */
+    @Log(title = "销售业务", businessType = BusinessType.EXPORT)
+    @PostMapping("/export")
+    @ResponseBody
+    public AjaxResult export(BizSellVo bizSell)
+    {
+        List<BizSellVo> list = bizSellService.selectBizSellList(bizSell);
+        ExcelUtil<BizSellVo> util = new ExcelUtil<BizSellVo>(BizSellVo.class);
+        return util.exportExcel(list, "sell");
+    }
+
+
+
+    /**
+     * 新增销售业务
+     */
+    @GetMapping("/add")
+    public String add()
+    {
+        return prefix + "/add";
+    }
+
+    /**
+     * 新增保存销售业务
+     */
+    @Log(title = "销售业务", businessType = BusinessType.INSERT)
+    @PostMapping("/add")
+    @ResponseBody
+    public AjaxResult addSave(BizSellVo bizSell) {
+        Long userId = ShiroUtils.getUserId();
+        if (SysUser.isAdmin(userId)) {
+            return error("提交申请失败：不允许管理员提交申请！");
+        }
+        return toAjax(bizSellService.insertBizSell(bizSell));
+    }
+
+    /**
+     * 修改销售业务
      */
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable("id") Long id, ModelMap mmap)
     {
-        BizDevelop bizDevelop = bizDevelopService.selectBizDevelopById(id);
-        mmap.put("bizDevelop", bizDevelop);
+        BizSell bizSell = bizSellService.selectBizSellById(id);
+        mmap.put("bizSell", bizSell);
         return prefix + "/edit";
     }
 
     /**
-     * 修改保存开发业务
+     * 修改保存销售业务
      */
-    @Log(title = "开发业务", businessType = BusinessType.UPDATE)
+    @Log(title = "销售业务", businessType = BusinessType.UPDATE)
     @PostMapping("/edit")
     @ResponseBody
-    public AjaxResult editSave(BizDevelopVo bizDevelop)
+    public AjaxResult editSave(BizSellVo bizSell)
     {
-        return toAjax(bizDevelopService.updateBizDevelop(bizDevelop));
+        return toAjax(bizSellService.updateBizSell(bizSell));
     }
 
     /**
-     * 删除开发业务
+     * 删除销售业务
      */
-    @Log(title = "开发业务", businessType = BusinessType.DELETE)
+    @Log(title = "销售业务", businessType = BusinessType.DELETE)
     @PostMapping( "/remove")
     @ResponseBody
     public AjaxResult remove(String ids)
     {
-        return toAjax(bizDevelopService.deleteBizDevelopByIds(ids));
+        return toAjax(bizSellService.deleteBizSellByIds(ids));
     }
 }

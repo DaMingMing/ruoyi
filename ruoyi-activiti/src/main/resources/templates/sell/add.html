@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('新增销售业务')" />
+    <th:block th:include="include :: datetimepicker-css" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-sell-add">
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">标题：</label>
+                <div class="col-sm-8">
+                    <input name="title" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">产品名称：</label>
+                <div class="col-sm-8">
+                    <input name="productName" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">SKU：</label>
+                <div class="col-sm-8">
+                    <input name="sku" class="form-control" type="text" required>
+                </div>
+            </div>
+<!--            <div class="form-group">
+                <label class="col-sm-3 control-label">市场调研：</label>
+                <div class="col-sm-8">
+                    <textarea name="marketResearch" class="form-control" required></textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">卖点分析：</label>
+                <div class="col-sm-8">
+                    <textarea name="sellingPointAna" class="form-control" required></textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">痛点分析：</label>
+                <div class="col-sm-8">
+                    <textarea name="painPointAna" class="form-control" required></textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">销售策略：</label>
+                <div class="col-sm-8">
+                    <textarea name="sellStrategy" class="form-control" required></textarea>
+                </div>
+            </div>-->
+
+
+
+            <!--<div class="form-group">
+                <label class="col-sm-3 control-label">keywords：</label>
+                <div class="col-sm-8">
+                    <input name="keywords" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">5point：</label>
+                <div class="col-sm-8">
+                    <textarea name="fivepoint" class="form-control"></textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">description：</label>
+                <div class="col-sm-8">
+                    <textarea name="description" class="form-control"></textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">图需：</label>
+                <div class="col-sm-8">
+                    <textarea name="photoNeed" class="form-control"></textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">运营计划：</label>
+                <div class="col-sm-8">
+                    <textarea name="businessPlan" class="form-control"></textarea>
+                </div>
+            </div>-->
+
+<!--            <div class="form-group">
+                <label class="col-sm-3 control-label">流程实例ID：</label>
+                <div class="col-sm-8">
+                    <input name="instanceId" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">申请人：</label>
+                <div class="col-sm-8">
+                    <input name="applyUser" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">申请时间：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        <input name="applyTime" class="form-control" placeholder="yyyy-MM-dd" type="text">
+                    </div>
+                </div>
+            </div>-->
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: datetimepicker-js" />
+    <script type="text/javascript">
+        var prefix = ctx + "sell"
+        $("#form-sell-add").validate({
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/add", $('#form-sell-add').serialize());
+            }
+        }
+
+        $("input[name='applyTime']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+    </script>
+</body>
+</html>

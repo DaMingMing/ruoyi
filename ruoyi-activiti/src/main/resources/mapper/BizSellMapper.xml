@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.BizSellMapper">
+    
+    <resultMap type="BizSellVo" id="BizSellResult">
+        <result property="id"    column="id"    />
+        <result property="title"    column="title"    />
+        <result property="productName"    column="product_name"    />
+        <result property="sku"    column="sku"    />
+        <result property="marketResearch"    column="market_research"    />
+        <result property="sellingPointAna"    column="selling_point_ana"    />
+        <result property="painPointAna"    column="pain_point_ana"    />
+        <result property="sellStrategy"    column="sell_strategy"    />
+        <result property="keywords"    column="keywords"    />
+        <result property="fivepoint"    column="fivepoint"    />
+        <result property="description"    column="description"    />
+        <result property="photoNeed"    column="photo_need"    />
+        <result property="businessPlan"    column="business_plan"    />
+        <result property="instanceId"    column="instance_id"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="applyUser"    column="apply_user"    />
+        <result property="applyTime"    column="apply_time"    />
+    </resultMap>
+
+    <sql id="selectBizSellVo">
+        select id, title, product_name, sku, market_research, selling_point_ana, pain_point_ana, sell_strategy, keywords, fivepoint, description, photo_need, business_plan, instance_id, create_by, create_time, update_by, update_time, apply_user, apply_time from biz_sell
+    </sql>
+
+    <select id="selectBizSellList" parameterType="BizSellVo" resultMap="BizSellResult">
+        <include refid="selectBizSellVo"/>
+        <where>  
+            <if test="title != null  and title != ''"> and title = #{title}</if>
+            <if test="productName != null  and productName != ''"> and product_name like concat('%', #{productName}, '%')</if>
+            <if test="sku != null  and sku != ''"> and sku = #{sku}</if>
+            <if test="marketResearch != null  and marketResearch != ''"> and market_research = #{marketResearch}</if>
+            <if test="sellingPointAna != null  and sellingPointAna != ''"> and selling_point_ana = #{sellingPointAna}</if>
+            <if test="painPointAna != null  and painPointAna != ''"> and pain_point_ana = #{painPointAna}</if>
+            <if test="sellStrategy != null  and sellStrategy != ''"> and sell_strategy = #{sellStrategy}</if>
+            <if test="keywords != null  and keywords != ''"> and keywords = #{keywords}</if>
+            <if test="fivepoint != null  and fivepoint != ''"> and fivepoint = #{fivepoint}</if>
+            <if test="description != null  and description != ''"> and description = #{description}</if>
+            <if test="photoNeed != null  and photoNeed != ''"> and photo_need = #{photoNeed}</if>
+            <if test="businessPlan != null  and businessPlan != ''"> and business_plan = #{businessPlan}</if>
+            <if test="instanceId != null  and instanceId != ''"> and instance_id = #{instanceId}</if>
+            <if test="applyUser != null  and applyUser != ''"> and apply_user = #{applyUser}</if>
+            <if test="applyTime != null "> and apply_time = #{applyTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectBizSellById" parameterType="Long" resultMap="BizSellResult">
+        <include refid="selectBizSellVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertBizSell" parameterType="BizSellVo" useGeneratedKeys="true" keyProperty="id">
+        insert into biz_sell
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="title != null  and title != ''">title,</if>
+            <if test="productName != null  and productName != ''">product_name,</if>
+            <if test="sku != null  and sku != ''">sku,</if>
+            <if test="marketResearch != null  and marketResearch != ''">market_research,</if>
+            <if test="sellingPointAna != null  and sellingPointAna != ''">selling_point_ana,</if>
+            <if test="painPointAna != null  and painPointAna != ''">pain_point_ana,</if>
+            <if test="sellStrategy != null  and sellStrategy != ''">sell_strategy,</if>
+            <if test="keywords != null  and keywords != ''">keywords,</if>
+            <if test="fivepoint != null  and fivepoint != ''">fivepoint,</if>
+            <if test="description != null  and description != ''">description,</if>
+            <if test="photoNeed != null  and photoNeed != ''">photo_need,</if>
+            <if test="businessPlan != null  and businessPlan != ''">business_plan,</if>
+            <if test="instanceId != null  and instanceId != ''">instance_id,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="applyUser != null  and applyUser != ''">apply_user,</if>
+            <if test="applyTime != null ">apply_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="title != null  and title != ''">#{title},</if>
+            <if test="productName != null  and productName != ''">#{productName},</if>
+            <if test="sku != null  and sku != ''">#{sku},</if>
+            <if test="marketResearch != null  and marketResearch != ''">#{marketResearch},</if>
+            <if test="sellingPointAna != null  and sellingPointAna != ''">#{sellingPointAna},</if>
+            <if test="painPointAna != null  and painPointAna != ''">#{painPointAna},</if>
+            <if test="sellStrategy != null  and sellStrategy != ''">#{sellStrategy},</if>
+            <if test="keywords != null  and keywords != ''">#{keywords},</if>
+            <if test="fivepoint != null  and fivepoint != ''">#{fivepoint},</if>
+            <if test="description != null  and description != ''">#{description},</if>
+            <if test="photoNeed != null  and photoNeed != ''">#{photoNeed},</if>
+            <if test="businessPlan != null  and businessPlan != ''">#{businessPlan},</if>
+            <if test="instanceId != null  and instanceId != ''">#{instanceId},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="applyUser != null  and applyUser != ''">#{applyUser},</if>
+            <if test="applyTime != null ">#{applyTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBizSell" parameterType="BizSellVo">
+        update biz_sell
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="title != null  and title != ''">title = #{title},</if>
+            <if test="productName != null  and productName != ''">product_name = #{productName},</if>
+            <if test="sku != null  and sku != ''">sku = #{sku},</if>
+            <if test="marketResearch != null  and marketResearch != ''">market_research = #{marketResearch},</if>
+            <if test="sellingPointAna != null  and sellingPointAna != ''">selling_point_ana = #{sellingPointAna},</if>
+            <if test="painPointAna != null  and painPointAna != ''">pain_point_ana = #{painPointAna},</if>
+            <if test="sellStrategy != null  and sellStrategy != ''">sell_strategy = #{sellStrategy},</if>
+            <if test="keywords != null  and keywords != ''">keywords = #{keywords},</if>
+            <if test="fivepoint != null  and fivepoint != ''">fivepoint = #{fivepoint},</if>
+            <if test="description != null  and description != ''">description = #{description},</if>
+            <if test="photoNeed != null  and photoNeed != ''">photo_need = #{photoNeed},</if>
+            <if test="businessPlan != null  and businessPlan != ''">business_plan = #{businessPlan},</if>
+            <if test="instanceId != null  and instanceId != ''">instance_id = #{instanceId},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="applyUser != null  and applyUser != ''">apply_user = #{applyUser},</if>
+            <if test="applyTime != null ">apply_time = #{applyTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBizSellById" parameterType="Long">
+        delete from biz_sell where id = #{id}
+    </delete>
+
+    <delete id="deleteBizSellByIds" parameterType="String">
+        delete from biz_sell where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>
