@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('销售确认美工设计')" />
+    <th:block th:include="include :: datetimepicker-css" />
+    <th:block th:include="include :: select2-css" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-develop-edit" th:object="${bizDesign}">
+            <input name="id" th:field="*{id}" type="hidden">
+            <input name="taskId" th:field="*{taskId}" type="hidden">
+            <input name="saveEntity" value="true" type="hidden">
+            <input type="hidden" name="p_COM_comment" />
+            <div class="form-group">
+                <label class="col-sm-3 control-label">申请人：</label>
+                <div class="col-sm-8">
+                    <input name="applyUserName" th:field="*{applyUserName}" class="form-control" type="text" readonly>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">申请时间：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        <input name="applyTime" th:value="${#dates.format(bizDesign.applyTime, 'yyyy-MM-dd HH:mm')}" class="form-control" type="text" disabled>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-3 control-label">标题：</label>
+                <div class="col-sm-8">
+                    <input name="title" th:field="*{title}" class="form-control" type="text" readonly>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">产品名称：</label>
+                <div class="col-sm-8">
+                    <input name="productName" th:field="*{productName}" class="form-control" type="text" readonly>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-3 control-label"><span style="color: red; ">*</span>SKU：</label>
+                <div class="col-sm-8">
+                    <input name="sku" th:field="*{sku}" class="form-control" type="text" readonly>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-3 control-label">图需：</label>
+                <div class="col-sm-8">
+                    <textarea name="photoNeed" class="form-control" readonly>[[*{photoNeed}]]</textarea>
+                </div>
+            </div>
+
+
+            <hr />
+            <div class="form-group">
+                <label class="col-sm-3 control-label" for="sellerApproved">审批意见：</label>
+                <div class="col-sm-8">
+                    <select name="p_B_sellerApproved" id="sellerApproved" class="form-control m-b">
+                        <option value="true">同意</option>
+                        <option value="false">拒绝</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">批注：</label>
+                <div class="col-sm-8">
+                    <textarea name="comment" class="form-control"></textarea>
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: datetimepicker-js" />
+    <th:block th:include="include :: select2-js" />
+    <script th:inline="javascript">
+        var prefix = ctx + "design";
+        $("#form-develop-edit").validate({
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                if ($('textarea[name="comment"]').val()) {
+                    $('input[name="p_COM_comment"]').val($('textarea[name="comment"]').val());
+                }
+                var taskId = [[${taskId}]];
+                $.operate.save(prefix + "/complete/" + taskId, $('#form-develop-edit').serialize());
+            }
+        }
+
+
+    </script>
+</body>
+</html>

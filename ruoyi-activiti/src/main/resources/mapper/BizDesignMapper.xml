@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.BizDesignMapper">
+    
+    <resultMap type="BizDesignVo" id="BizDesignResult">
+        <result property="id"    column="id"    />
+        <result property="title"    column="title"    />
+        <result property="productName"    column="product_name"    />
+        <result property="sku"    column="sku"    />
+        <result property="photoNeed"    column="photo_need"    />
+        <result property="instanceId"    column="instance_id"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="applyUser"    column="apply_user"    />
+        <result property="applyTime"    column="apply_time"    />
+    </resultMap>
+
+    <sql id="selectBizDesignVo">
+        select id, title, product_name, sku, photo_need, instance_id, create_by, create_time, update_by, update_time, apply_user, apply_time from biz_design
+    </sql>
+
+    <select id="selectBizDesignList" parameterType="BizDesignVo" resultMap="BizDesignResult">
+        <include refid="selectBizDesignVo"/>
+        <where>  
+            <if test="title != null  and title != ''"> and title = #{title}</if>
+            <if test="productName != null  and productName != ''"> and product_name like concat('%', #{productName}, '%')</if>
+            <if test="sku != null  and sku != ''"> and sku = #{sku}</if>
+            <if test="photoNeed != null  and photoNeed != ''"> and photo_need = #{photoNeed}</if>
+            <if test="instanceId != null  and instanceId != ''"> and instance_id = #{instanceId}</if>
+            <if test="applyUser != null  and applyUser != ''"> and apply_user = #{applyUser}</if>
+            <if test="applyTime != null "> and apply_time = #{applyTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectBizDesignById" parameterType="Long" resultMap="BizDesignResult">
+        <include refid="selectBizDesignVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertBizDesign" parameterType="BizDesignVo" useGeneratedKeys="true" keyProperty="id">
+        insert into biz_design
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="title != null  and title != ''">title,</if>
+            <if test="productName != null  and productName != ''">product_name,</if>
+            <if test="sku != null  and sku != ''">sku,</if>
+            <if test="photoNeed != null  and photoNeed != ''">photo_need,</if>
+            <if test="instanceId != null  and instanceId != ''">instance_id,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="applyUser != null  and applyUser != ''">apply_user,</if>
+            <if test="applyTime != null ">apply_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="title != null  and title != ''">#{title},</if>
+            <if test="productName != null  and productName != ''">#{productName},</if>
+            <if test="sku != null  and sku != ''">#{sku},</if>
+            <if test="photoNeed != null  and photoNeed != ''">#{photoNeed},</if>
+            <if test="instanceId != null  and instanceId != ''">#{instanceId},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="applyUser != null  and applyUser != ''">#{applyUser},</if>
+            <if test="applyTime != null ">#{applyTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBizDesign" parameterType="BizDesignVo">
+        update biz_design
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="title != null  and title != ''">title = #{title},</if>
+            <if test="productName != null  and productName != ''">product_name = #{productName},</if>
+            <if test="sku != null  and sku != ''">sku = #{sku},</if>
+            <if test="photoNeed != null  and photoNeed != ''">photo_need = #{photoNeed},</if>
+            <if test="instanceId != null  and instanceId != ''">instance_id = #{instanceId},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="applyUser != null  and applyUser != ''">apply_user = #{applyUser},</if>
+            <if test="applyTime != null ">apply_time = #{applyTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBizDesignById" parameterType="Long">
+        delete from biz_design where id = #{id}
+    </delete>
+
+    <delete id="deleteBizDesignByIds" parameterType="String">
+        delete from biz_design where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>
