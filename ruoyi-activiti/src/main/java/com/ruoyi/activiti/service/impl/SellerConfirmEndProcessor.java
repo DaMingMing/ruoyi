@@ -16,15 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Date;
 
 /**
- * <b>监听器使用范例</b>：开发流程销售确认后处理器
- * <p>
- * 设置销假时间
- * </p>
- * <p>
- * 使用Spring代理，可以注入Bean，管理事物
- * </p>
- *
- * @author HenryYan
+ * 开发流程销售确认后处理器
+ * @author xiaojm
  */
 @Component
 @Transactional
