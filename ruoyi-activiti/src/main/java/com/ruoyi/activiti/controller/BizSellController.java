@@ -172,6 +172,8 @@ public class BizSellController extends BaseController
             if(saveEntityBoolean){
                 variables.put("sku",sellVo.getSku());
                 variables.put("productName",sellVo.getProductName());
+                variables.put("title",sellVo.getTitle());
+                variables.put("photoNeed",sellVo.getPhotoNeed());
             }
 
 
