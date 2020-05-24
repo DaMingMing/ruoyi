@@ -55,6 +55,15 @@
                 </div>
             </div>
 
+            <div class="form-group">
+                <label class="col-sm-3 control-label">附件：</label>
+                <div class="col-sm-8">
+                    <!-- <input id="attachment" name="attachment" class="form-control" type="file">-->
+                    <button type="button"  onclick="attachment.click();" class="btn btn-primary btn-sm"> 选择附件</button>
+                    <input type="file" id="attachment"  style="display: none;" onchange="setfile_tmp()";>
+                    <input type="text" id="attachmentName" readonly="readonly"  onclick="attachment.click(); " style="border: 0px;">
+                </div>
+            </div>
 
             <hr />
             <div class="form-group">
@@ -84,7 +93,7 @@
             focusCleanup: true
         });
 
-        function submitHandler() {
+/*        function submitHandler() {
             if ($.validate.form()) {
                 if ($('textarea[name="comment"]').val()) {
                     $('input[name="p_COM_comment"]').val($('textarea[name="comment"]').val());
@@ -92,6 +101,67 @@
                 var taskId = [[${taskId}]];
                 $.operate.save(prefix + "/complete/" + taskId, $('#form-develop-edit').serialize());
             }
+        }*/
+
+        function setfile_tmp(){
+            var attachment = $("#attachment").val();
+            //显示上传附件名称（去掉目录）
+            var array = attachment.split("\\");
+            var attachmentName = array[array.length-1];
+            //name1=name1.toLowerCase();
+            $("#attachmentName").val(attachmentName);
+        }
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                uploadFile();
+            }
+        }
+
+        function uploadFile() {
+            var formData = new FormData();
+            if ($('#attachment')[0].files[0] == null) {
+                $.modal.alertWarning("请先选择附件");
+                return false;
+            }
+
+            if ($('textarea[name="comment"]').val()) {
+                $('input[name="p_COM_comment"]').val($('textarea[name="comment"]').val());
+            }
+
+            // file 为想要上传的文件
+            formData.append("file", $("#attachment")[0].files[0]);
+            //goodInfo 里面即为想要传到后端的json数据
+            var bizDesign = JSON.stringify({
+                "title": $('#title').val(),
+/*                "productName": $('#productName').val(),
+                "sellingPoint":$('#sellingPoint').val(),
+                "painPoint": $('#painPoint').val(),*/
+                "id":$('input[name="id"]').val(),
+                "attachmentName":$('#attachmentName').val()
+
+            });
+
+            var taskId = [[${taskId}]];
+            formData.append('bizDesign', new Blob([bizDesign],{type: "application/json"}));
+            formData.append("saveEntity", $('input[name="saveEntity"]').val());
+            formData.append("p_B_devLeaderApproved", $('#devLeaderApproved').val());
+            formData.append("p_COM_comment", $('input[name="p_COM_comment"]').val());
+            console.log(formData);
+
+            $.ajax({
+                url: prefix + "/complete1/" + taskId,
+                type: 'post',
+                cache: false,
+                data: formData,
+                processData: false,
+                contentType: false,
+                //contentType : "application/json;charset=utf-8",
+                dataType: "json",
+                success: function(result) {
+                    $.operate.successCallback(result);
+                }
+            });
         }
 
 

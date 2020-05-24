@@ -25,10 +25,34 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateTime"    column="update_time"    />
         <result property="applyUser"    column="apply_user"    />
         <result property="applyTime"    column="apply_time"    />
+        <result property="attachment"    column="attachment"    />
+        <result property="attachmentName"    column="attachmentName"    />
+        <result property="price"    column="price"    />
+        <result property="product_title"    column="product_title"    />
+
+        <result property="sell_month"    column="sell_month"    />
+        <result property="sell_count"    column="sell_count"    />
+        <result property="sell_amount"    column="sell_amount"    />
+        <result property="sell_profitRate"    column="sell_profitRate"    />
+        <result property="sell_profit"    column="sell_profit"    />
+
+        <result property="ad_perPrice"    column="ad_perPrice"    />
+        <result property="ad_tarnsRate"    column="ad_tarnsRate"    />
+        <result property="ad_tarnsCount"    column="ad_tarnsCount"    />
+        <result property="ad_clickRate"    column="ad_clickRate"    />
+        <result property="ad_click"    column="ad_click"    />
+        <result property="ad_exposureRate"    column="ad_exposureRate"    />
+        <result property="ad_fee"    column="ad_fee"    />
+        <result property="ad_perCount"    column="ad_perCount"    />
+        <result property="ad_perClick"    column="ad_perClick"    />
+        <result property="ad_perFee"    column="ad_perFee"    />
     </resultMap>
 
     <sql id="selectBizSellVo">
-        select id, title, product_name, sku, market_research, selling_point_ana, pain_point_ana, sell_strategy, keywords, fivepoint, description, photo_need, business_plan, instance_id, create_by, create_time, update_by, update_time, apply_user, apply_time from biz_sell
+        select id, title, product_name, sku, market_research, selling_point_ana, pain_point_ana, sell_strategy, keywords, fivepoint, description, photo_need, business_plan, instance_id, create_by, create_time, update_by, update_time, apply_user, apply_time,attachment,attachmentName,price,product_title,
+        sell_month,sell_count,sell_amount,sell_profitRate,sell_profit,
+        ad_perPrice,ad_tarnsRate,ad_tarnsCount,ad_clickRate,ad_click,ad_exposureRate,ad_fee,ad_perCount,ad_perClick,ad_perFee
+        from biz_sell
     </sql>
 
     <select id="selectBizSellList" parameterType="BizSellVo" resultMap="BizSellResult">
@@ -50,6 +74,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="applyUser != null  and applyUser != ''"> and apply_user = #{applyUser}</if>
             <if test="applyTime != null "> and apply_time = #{applyTime}</if>
         </where>
+        order  by create_time desc
     </select>
     
     <select id="selectBizSellById" parameterType="Long" resultMap="BizSellResult">
@@ -79,6 +104,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null ">update_time,</if>
             <if test="applyUser != null  and applyUser != ''">apply_user,</if>
             <if test="applyTime != null ">apply_time,</if>
+            <if test="attachment != null ">attachment,</if>
+            <if test="attachmentName != null ">attachmentName,</if>
+            <if test="price != null ">price,</if>
+            <if test="product_title != null ">product_title,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="title != null  and title != ''">#{title},</if>
@@ -100,6 +129,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null ">#{updateTime},</if>
             <if test="applyUser != null  and applyUser != ''">#{applyUser},</if>
             <if test="applyTime != null ">#{applyTime},</if>
+            <if test="attachment != null ">#{attachment},</if>
+            <if test="attachmentName != null ">#{attachmentName},</if>
+            <if test="price != null ">#{price},</if>
+            <if test="product_title != null ">#{product_title},</if>
          </trim>
     </insert>
 
@@ -125,6 +158,27 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null ">update_time = #{updateTime},</if>
             <if test="applyUser != null  and applyUser != ''">apply_user = #{applyUser},</if>
             <if test="applyTime != null ">apply_time = #{applyTime},</if>
+            <if test="attachment != null and attachment != ''">attachment = #{attachment},</if>
+            <if test="attachmentName != null and attachmentName != ''">attachmentName = #{attachmentName},</if>
+            <if test="price != null ">price = #{price},</if>
+            <if test="product_title != null and product_title != ''">product_title = #{product_title},</if>
+
+
+            <if test="sell_month != null  and sell_month != ''">sell_month = #{sell_month},</if>
+            <if test="sell_count != null ">sell_count = #{sell_count},</if>
+            <if test="sell_amount != null ">sell_amount = #{sell_amount},</if>
+            <if test="sell_profitRate != null  and sell_profitRate != ''">sell_profitRate = #{sell_profitRate},</if>
+            <if test="sell_profit != null ">sell_profit = #{sell_profit},</if>
+            <if test="ad_perPrice != null ">ad_perPrice = #{ad_perPrice},</if>
+            <if test="ad_tarnsRate != null and ad_tarnsRate != ''">ad_tarnsRate = #{ad_tarnsRate},</if>
+            <if test="ad_tarnsCount != null ">ad_tarnsCount = #{ad_tarnsCount},</if>
+            <if test="ad_clickRate != null and ad_clickRate != ''">ad_clickRate = #{ad_clickRate},</if>
+            <if test="ad_click != null ">ad_click = #{ad_click},</if>
+            <if test="ad_exposureRate != null and ad_exposureRate != ''">ad_exposureRate = #{ad_exposureRate},</if>
+            <if test="ad_fee != null ">ad_fee = #{ad_fee},</if>
+            <if test="ad_perCount != null ">ad_perCount = #{ad_perCount},</if>
+            <if test="ad_perClick != null ">ad_perClick = #{ad_perClick},</if>
+            <if test="ad_perFee != null ">ad_perFee = #{ad_perFee},</if>
         </trim>
         where id = #{id}
     </update>

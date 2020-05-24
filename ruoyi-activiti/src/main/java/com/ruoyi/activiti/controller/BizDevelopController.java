@@ -1,16 +1,23 @@
 package com.ruoyi.activiti.controller;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.ruoyi.activiti.domain.BizDesignVo;
 import com.ruoyi.activiti.domain.BizDevelopVo;
 import com.ruoyi.activiti.domain.BizLeaveVo;
+import com.ruoyi.common.config.Global;
+import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.common.utils.file.FileUploadUtils;
+import com.ruoyi.common.utils.file.FileUtils;
 import com.ruoyi.framework.util.ShiroUtils;
 import com.ruoyi.system.domain.SysUser;
+import com.ruoyi.system.service.ISysUserService;
 import org.activiti.engine.IdentityService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
@@ -30,8 +37,10 @@ import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.page.TableDataInfo;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
@@ -57,6 +66,9 @@ public class BizDevelopController extends BaseController
 
     @Autowired
     private IdentityService identityService;
+
+    @Autowired
+    private ISysUserService userService;
 
     @GetMapping()
     public String develop(ModelMap mmap){
@@ -121,6 +133,13 @@ public class BizDevelopController extends BaseController
         String processInstanceId = task.getProcessInstanceId();
         ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().processInstanceId(processInstanceId).singleResult();
         BizDevelopVo bizDevelop = bizDevelopService.selectBizDevelopById(new Long(processInstance.getBusinessKey()));
+
+        //获取销售人员list
+        SysUser user = new SysUser();
+        user.setRoleId(8l);
+        List<SysUser> list = userService.selectAllocatedList(user);
+        mmap.put("list", list);
+
         mmap.put("bizDevelop", bizDevelop);
         mmap.put("taskId", taskId);
         String verifyName = task.getTaskDefinitionKey().substring(0, 1).toUpperCase() + task.getTaskDefinitionKey().substring(1);
@@ -154,7 +173,19 @@ public class BizDevelopController extends BaseController
     @Log(title = "开发", businessType = BusinessType.INSERT)
     @PostMapping("/add")
     @ResponseBody
-    public AjaxResult addSave(BizDevelopVo bizDevelop){
+    public AjaxResult addSave(@RequestPart("bizDevelop") BizDevelopVo bizDevelop,/*@RequestPart("file")*/ MultipartFile file){
+        if(null != file) {
+            String name = file.getName();
+            // 上传并返回新文件名称
+            String fileName = null;
+            try {
+                fileName = FileUploadUtils.upload(file);
+            } catch (IOException e) {
+                logger.error("error on add attachment {}, v", new Object[]{file.getName(), e});
+                return error("新增开发任务失败");
+            }
+            bizDevelop.setAttachment(fileName);
+        }
         Long userId = ShiroUtils.getUserId();
         if (SysUser.isAdmin(userId)) {
             return error("提交申请失败：不允许管理员提交申请！");
@@ -162,6 +193,26 @@ public class BizDevelopController extends BaseController
         return toAjax(bizDevelopService.insertBizDevelop(bizDevelop));
     }
 
+
+    /**
+     * 本地资源通用下载
+     */
+    @GetMapping("/common/download/resource")
+    public void resourceDownload(String resource, HttpServletRequest request, HttpServletResponse response)
+            throws Exception
+    {
+        // 本地资源路径
+        String localPath = Global.getProfile();
+        // 数据库资源地址
+        String downloadPath = localPath + StringUtils.substringAfter(resource, Constants.RESOURCE_PREFIX);
+        // 下载名称
+        String downloadName = StringUtils.substringAfterLast(downloadPath, "/");
+        response.setCharacterEncoding("utf-8");
+        response.setContentType("multipart/form-data");
+        response.setHeader("Content-Disposition",
+                "attachment;fileName=" + FileUtils.setFileDownloadHeader(request, downloadName));
+        FileUtils.writeBytes(downloadPath, response.getOutputStream());
+    }
 
     /**
      * 完成任务
@@ -176,6 +227,7 @@ public class BizDevelopController extends BaseController
         Map<String, Object> variables = new HashMap<String, Object>();
         Enumeration<String> parameterNames = request.getParameterNames();
         String comment = null;          // 批注
+        String assign = null; //指派人员
         try {
             while (parameterNames.hasMoreElements()) {
                 String parameterName = (String) parameterNames.nextElement();
@@ -192,6 +244,8 @@ public class BizDevelopController extends BaseController
                             value = sdf.parse(paramValue);
                         } else if (parameter[1].equals("COM")) {
                             comment = paramValue;
+                        }else if (parameter[1].equals("S")) {
+                            assign = paramValue;
                         }
                         variables.put(parameter[2], value);
                     } else {
@@ -209,8 +263,12 @@ public class BizDevelopController extends BaseController
                 variables.put("productName",develop.getProductName());
                 variables.put("title",develop.getTitle());
             }
-
-
+            /*${sellerUserId}*/
+            /*p_B_assignSeller*/
+            //指派人员
+            if (StringUtils.isNotEmpty(assign)) {
+                variables.put("sellerUserId",assign);
+            }
             bizDevelopService.complete(develop, saveEntityBoolean, taskId, variables);
 
 
@@ -249,8 +307,23 @@ public class BizDevelopController extends BaseController
     @Log(title = "开发业务", businessType = BusinessType.UPDATE)
     @PostMapping("/edit")
     @ResponseBody
-    public AjaxResult editSave(BizDevelopVo bizDevelop)
-    {
+    public AjaxResult editSave(@RequestPart("bizDevelop") BizDevelopVo bizDevelop,/*@RequestPart("file")*/ MultipartFile file) {
+        if(null != file) {
+            String name = file.getName();
+            // 上传并返回新文件名称
+            String fileName = null;
+            try {
+                fileName = FileUploadUtils.upload(file);
+            } catch (IOException e) {
+                logger.error("error on add attachment {}, v", new Object[]{file.getName(), e});
+                return error("修改开发任务失败");
+            }
+            bizDevelop.setAttachment(fileName);
+        }
+        Long userId = ShiroUtils.getUserId();
+        if (SysUser.isAdmin(userId)) {
+            return error("提交申请失败：不允许管理员修改申请！");
+        }
         return toAjax(bizDevelopService.updateBizDevelop(bizDevelop));
     }
 

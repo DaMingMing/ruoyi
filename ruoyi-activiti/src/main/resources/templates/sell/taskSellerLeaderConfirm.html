@@ -14,97 +14,143 @@
             <input type="hidden" name="p_COM_comment" />
             <div class="form-group">
                 <label class="col-sm-3 control-label">申请人：</label>
-                <div class="col-sm-8">
+                <div class="col-sm-3">
                     <input name="applyUserName" th:field="*{applyUserName}" class="form-control" type="text" readonly>
                 </div>
-            </div>
-            <div class="form-group">
+
                 <label class="col-sm-3 control-label">申请时间：</label>
-                <div class="col-sm-8">
+                <div class="col-sm-3">
                     <div class="input-group date">
                         <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                         <input name="applyTime" th:value="${#dates.format(bizSell.applyTime, 'yyyy-MM-dd HH:mm')}" class="form-control" type="text" disabled>
                     </div>
                 </div>
             </div>
-
-            <div class="form-group">
-                <label class="col-sm-3 control-label">标题：</label>
-                <div class="col-sm-8">
-                    <input name="title" th:field="*{title}" class="form-control" type="text" readonly>
-                </div>
-            </div>
             <div class="form-group">
                 <label class="col-sm-3 control-label">产品名称：</label>
-                <div class="col-sm-8">
+                <div class="col-sm-3">
                     <input name="productName" th:field="*{productName}" class="form-control" type="text" readonly>
                 </div>
-            </div>
 
-            <div class="form-group">
                 <label class="col-sm-3 control-label"><span style="color: red; ">*</span>SKU：</label>
-                <div class="col-sm-8">
+                <div class="col-sm-3">
                     <input name="sku" th:field="*{sku}" class="form-control" type="text" readonly>
                 </div>
             </div>
+            <hr />
+            <h3>销售计划：</h3>
 
             <div class="form-group">
-                <label class="col-sm-3 control-label">市场调研：</label>
-                <div class="col-sm-8">
-                    <textarea name="marketResearch" class="form-control" readonly>[[*{marketResearch}]]</textarea>
+                <label class="col-sm-3 control-label">月份：</label>
+                <div class="col-sm-3">
+                    <div class="input-group date">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        <input name="sell_month" th:value="*{sell_month}" class="form-control calcTotalSecondInput"  type="text" disabled>
+                    </div>
                 </div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-3 control-label">卖点分析：</label>
-                <div class="col-sm-8">
-                    <textarea name="sellingPointAna" class="form-control" readonly>[[*{sellingPointAna}]]</textarea>
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-3 control-label">痛点分析：</label>
-                <div class="col-sm-8">
-                    <textarea name="painPointAna" class="form-control" readonly>[[*{painPointAna}]]</textarea>
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-3 control-label">销售策略：</label>
-                <div class="col-sm-8">
-                    <textarea name="sellStrategy" class="form-control" readonly>[[*{sellStrategy}]]</textarea>
-                </div>
-            </div>
 
-
-            <div class="form-group">
-                <label class="col-sm-3 control-label">keywords：</label>
-                <div class="col-sm-8">
-                    <input name="keywords" th:field="*{keywords}" class="form-control" type="text" readonly>
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-3 control-label">5point：</label>
-                <div class="col-sm-8">
-                    <textarea name="fivepoint" class="form-control" readonly>[[*{fivepoint}]]</textarea>
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-3 control-label">description：</label>
-                <div class="col-sm-8">
-                    <textarea name="description" class="form-control" readonly>[[*{description}]]</textarea>
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-3 control-label">图需：</label>
-                <div class="col-sm-8">
-                    <textarea name="photoNeed" class="form-control" readonly>[[*{photoNeed}]]</textarea>
+                <label class="col-sm-3 control-label">目标销量：</label>
+                <div class="col-sm-3">
+                    <input name="sell_count" th:field="*{sell_count}" class="form-control" type="text" readonly>
                 </div>
             </div>
 
             <div class="form-group">
-                <label class="col-sm-3 control-label">运营计划：</label>
-                <div class="col-sm-8">
-                    <textarea name="businessPlan" class="form-control" readonly>[[*{businessPlan}]]</textarea>
+                <label class="col-sm-3 control-label">目标销售额：</label>
+                <div class="col-sm-3">
+                    <input name="sell_amount" class="form-control" th:field="*{sell_amount}" type="text" readonly>
+                </div>
+
+                <label class="col-sm-3 control-label">利润率：</label>
+                <div class="col-sm-3">
+                    <input name="sell_profitRate" class="form-control" th:field="*{sell_profitRate}" type="text" readonly>
                 </div>
             </div>
+
+            <div class="form-group">
+                <label class="col-sm-3 control-label">利润：</label>
+                <div class="col-sm-3">
+                    <input name="sell_profit" class="form-control" th:field="*{sell_profit}" type="text" readonly>
+                </div>
+            </div>
+
+
+            <hr />
+            <h3>广告预算：</h3>
+
+            <div class="form-group">
+                <label class="col-sm-3 control-label">关键词平均竞价：</label>
+                <div class="col-sm-3">
+                    <input name="ad_perPrice" class="form-control" type="text" th:field="*{ad_perPrice}" readonly>
+                </div>
+
+                <label class="col-sm-3 control-label">预计广告转换率：</label>
+                <div class="col-sm-3">
+                    <input name="ad_tarnsRate" class="form-control" th:field="*{ad_tarnsRate}" type="text" readonly>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-3 control-label">预计广告转换单量：</label>
+                <div class="col-sm-3">
+                    <input name="ad_tarnsCount" class="form-control" th:field="*{ad_tarnsCount}" type="text" readonly>
+                </div>
+
+                <label class="col-sm-3 control-label">预计广告点击率：</label>
+                <div class="col-sm-3">
+                    <input name="ad_clickRate" class="form-control" th:field="*{ad_clickRate}" type="text" readonly>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-3 control-label">预计点击：</label>
+                <div class="col-sm-3">
+                    <input name="ad_click" class="form-control" type="text" readonly th:field="*{ad_click}">
+                </div>
+
+                <label class="col-sm-3 control-label">预计曝光率：</label>
+                <div class="col-sm-3">
+                    <input name="ad_exposureRate" class="form-control" type="text" readonly th:field="*{ad_exposureRate}">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-3 control-label">预计广告费：</label>
+                <div class="col-sm-3">
+                    <input name="ad_fee" class="form-control" type="text" readonly th:field="*{ad_fee}">
+                </div>
+
+                <label class="col-sm-3 control-label">平均每天广告销量：</label>
+                <div class="col-sm-3">
+                    <input name="ad_perCount" class="form-control" type="text" readonly th:field="*{ad_perCount}">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-3 control-label">平均每天广告点击：</label>
+                <div class="col-sm-3">
+                    <input name="ad_perClick" class="form-control" type="text" readonly th:field="*{ad_perClick}">
+                </div>
+
+                <label class="col-sm-3 control-label">平均每天广告费用：</label>
+                <div class="col-sm-3">
+                    <input name="ad_perFee" class="form-control" type="text" readonly th:field="*{ad_perFee}">
+                </div>
+            </div>
+
+
+            <hr />
+            <h3>Review计划&QA计划&点赞&加购计划：</h3>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">附件：</label>
+                <div class="col-sm-8">
+                    <button type="button" id="select_file"  class="btn btn-primary btn-sm disabled"> 选择附件</button>
+                    <input type="file" id="attachment"  style="display: none;" onchange="setfile_tmp()";>
+                    <input type="text" id="attachmentName" readonly="readonly" th:value="${bizSell.attachmentName}"  style="border: 0px;">
+                    <a class='btn btn-outline-success btn-sm' href="javascript:void(0)"  th:name="${bizSell.attachment}" id="download">下载</a>
+                </div>
+            </div>
+
 
             <hr />
             <div class="form-group">
@@ -143,6 +189,20 @@
             }
         }
 
+
+        $("#download").click(function(){
+            console.log($("#download").attr("name"));
+            if($("#download").attr("name") === null || $("#download").attr("name") === ''){
+                $.modal.alertWarning("暂无附件上传");
+                return false;
+            }
+            downloadFile($("#download").attr("name"));
+        });
+
+        function downloadFile(value){
+            //alert(value);
+            window.location.href = ctx + "common/download/resource?resource=" + value;
+        }
 
     </script>
 </body>

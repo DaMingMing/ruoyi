@@ -39,12 +39,12 @@
                 </div>
             </div>
 
-            <div class="form-group">
+<!--            <div class="form-group">
                 <label class="col-sm-3 control-label">SKU：</label>
                 <div class="col-sm-8">
                     <input name="sku" th:field="*{sku}" class="form-control" type="text" readonly>
                 </div>
-            </div>
+            </div>-->
 
             <div class="form-group">
                 <label class="col-sm-3 control-label">卖点：</label>
@@ -58,6 +58,16 @@
                     <textarea name="painPoint" class="form-control" >[[*{painPoint}]]</textarea>
                 </div>
             </div>
+
+<!--            <div class="form-group">
+                <label class="col-sm-3 control-label">附件：</label>
+                <div class="col-sm-8">
+                    <button type="button" id="select_file" onclick="attachment.click();" class="btn btn-primary btn-sm"> 选择附件</button>
+                    <input type="file" id="attachment"  style="display: none;" onchange="setfile_tmp()";>
+                    <input type="text" id="attachmentName" readonly="readonly" th:value="${bizDevelop.attachmentName}" onclick="attachment.click(); " style="border: 0px;">
+                    <a class='btn btn-outline-success btn-sm' href="javascript:void(0)"  th:name="${bizDevelop.attachment}" id="download">下载</a>
+                </div>
+            </div>-->
 
             <hr />
             <div class="form-group">

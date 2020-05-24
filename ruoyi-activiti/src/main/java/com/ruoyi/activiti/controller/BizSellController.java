@@ -1,14 +1,17 @@
 package com.ruoyi.activiti.controller;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.ruoyi.activiti.domain.BizDesignVo;
 import com.ruoyi.activiti.domain.BizDevelopVo;
 import com.ruoyi.activiti.domain.BizSellVo;
 import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.common.utils.file.FileUploadUtils;
 import com.ruoyi.framework.util.ShiroUtils;
 import com.ruoyi.system.domain.SysUser;
 import org.activiti.engine.IdentityService;
@@ -30,6 +33,7 @@ import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.page.TableDataInfo;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -186,6 +190,69 @@ public class BizSellController extends BaseController
             return error("完成任务失败");
         }
     }
+
+
+    /**
+     * 完成任务
+     *
+     * @return
+     */
+    @RequestMapping(value = "/complete1/{taskId}", method = {RequestMethod.POST, RequestMethod.GET})
+    @ResponseBody
+    public AjaxResult complete1(@PathVariable("taskId") String taskId,
+                                HttpServletRequest request,
+                                @RequestPart("file") MultipartFile file,
+                                @RequestPart("bizSell") BizSellVo sellVo,
+                                @RequestPart("saveEntity") String saveEntity,@RequestPart("p_B_devLeaderApproved") String p_B_devLeaderApproved,@RequestPart("p_COM_comment") String p_COM_comment) {
+
+        // 上传并返回新文件名称
+        String fileName = null;
+        try {
+            fileName = FileUploadUtils.upload(file);
+        } catch (IOException e) {
+            logger.error("error on add attachment {}, v", new Object[]{file.getName(), e});
+            return error("运营计划任务失败");
+        }
+        sellVo.setAttachment(fileName);
+
+        boolean saveEntityBoolean = BooleanUtils.toBoolean(saveEntity);
+        Map<String, Object> variables = new HashMap<String, Object>();
+
+        String comment = null;          // 批注
+        if(StringUtils.isNotBlank(p_COM_comment)) {
+            comment = p_COM_comment;
+            variables.put("comment",comment);
+        }
+
+        Object approved = null;          // 审批意见
+        if(StringUtils.isNotBlank(p_B_devLeaderApproved)) {
+            approved = BooleanUtils.toBoolean(p_B_devLeaderApproved);
+            variables.put("devLeaderApproved",approved);
+        }
+
+        try {
+            if (StringUtils.isNotEmpty(comment)) {
+                identityService.setAuthenticatedUserId(ShiroUtils.getLoginName());
+                taskService.addComment(taskId, sellVo.getInstanceId(), comment);
+            }
+            //设置流程变量产品信息传递到监听器
+            if(saveEntityBoolean){
+                variables.put("sku",sellVo.getSku());
+                variables.put("productName",sellVo.getProductName());
+                variables.put("title",sellVo.getTitle());
+                variables.put("photoNeed",sellVo.getPhotoNeed());
+            }
+
+
+            bizSellService.complete(sellVo, saveEntityBoolean, taskId, variables);
+
+            return success("任务已完成");
+        } catch (Exception e) {
+            logger.error("error on complete task {}, variables={}", new Object[]{taskId, variables, e});
+            return error("完成任务失败");
+        }
+    }
+
 
     /**
      * 自动绑定页面字段

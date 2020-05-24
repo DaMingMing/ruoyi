@@ -10,31 +10,40 @@
             <div class="form-group">    
                 <label class="col-sm-3 control-label"><span style="color: red; ">*</span>标题：</label>
                 <div class="col-sm-8">
-                    <input name="title" class="form-control" type="text" required>
+                    <input name="title" class="form-control" type="text" id="title" required>
                 </div>
             </div>
             <div class="form-group">    
                 <label class="col-sm-3 control-label"><span style="color: red; ">*</span>产品名称：</label>
                 <div class="col-sm-8">
-                    <input name="productName" class="form-control" type="text" required>
+                    <input name="productName" class="form-control" id="productName" type="text" required>
                 </div>
             </div>
-            <div class="form-group">
+<!--            <div class="form-group">
                 <label class="col-sm-3 control-label">SKU：</label>
                 <div class="col-sm-8">
                     <input name="sku" class="form-control" type="text" readonly>
                 </div>
-            </div>
+            </div>-->
             <div class="form-group">
                 <label class="col-sm-3 control-label"><span style="color: red; ">*</span>卖点：</label>
                 <div class="col-sm-8">
-                    <textarea name="sellingPoint" class="form-control" required></textarea>
+                    <textarea name="sellingPoint" class="form-control" id="sellingPoint" required></textarea>
                 </div>
             </div>
             <div class="form-group">
                 <label class="col-sm-3 control-label"><span style="color: red; ">*</span>痛点：</label>
                 <div class="col-sm-8">
-                    <textarea name="painPoint" class="form-control" required></textarea>
+                    <textarea name="painPoint" class="form-control"  id="painPoint" required></textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">附件：</label>
+                <div class="col-sm-8">
+                   <!-- <input id="attachment" name="attachment" class="form-control" type="file">-->
+                    <button type="button"  onclick="attachment.click();" class="btn btn-primary btn-sm"> 选择附件</button>
+                    <input type="file" id="attachment"  style="display: none;" onchange="setfile_tmp()";>
+                    <input type="text" id="attachmentName" readonly="readonly"  onclick="attachment.click(); " style="border: 0px;">
                 </div>
             </div>
 <!--            <div class="form-group">
@@ -68,10 +77,19 @@
             focusCleanup: true
         });
 
-        function submitHandler() {
+/*        function submitHandler() {
             if ($.validate.form()) {
                 $.operate.save(prefix + "/add", $('#form-develop-add').serialize());
             }
+        }*/
+
+        function setfile_tmp(){
+            var attachment = $("#attachment").val();
+            //显示上传附件名称（去掉目录）
+            var array = attachment.split("\\");
+            var attachmentName = array[array.length-1];
+            //name1=name1.toLowerCase();
+            $("#attachmentName").val(attachmentName);
         }
 
         $("input[name='applyTime']").datetimepicker({
@@ -79,6 +97,48 @@
             minView: "month",
             autoclose: true
         });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                uploadFile();
+            }
+        }
+
+        function uploadFile() {
+            var formData = new FormData();
+/*            if ($('#attachment')[0].files[0] == null) {
+                $.modal.alertWarning("请先选择文件路径");
+                return false;
+            }*/
+
+            // file 为想要上传的文件
+            formData.append("file", $("#attachment")[0].files[0]);
+            //goodInfo 里面即为想要传到后端的json数据
+            var bizDevelop = JSON.stringify({
+                "title": $('#title').val(),
+                "productName": $('#productName').val(),
+                "sellingPoint":$('#sellingPoint').val(),
+                "painPoint": $('#painPoint').val(),
+                "attachmentName":$('#attachmentName').val()
+            });
+            console.log(bizDevelop);
+            formData.append('bizDevelop', new Blob([bizDevelop],{type: "application/json"}));
+
+
+            $.ajax({
+                url: prefix + "/add",
+                type: 'post',
+                cache: false,
+                data: formData,
+                processData: false,
+                contentType: false,
+                //contentType : "application/json;charset=utf-8",
+                dataType: "json",
+                success: function(result) {
+                    $.operate.successCallback(result);
+                }
+            });
+        }
     </script>
 </body>
 </html>

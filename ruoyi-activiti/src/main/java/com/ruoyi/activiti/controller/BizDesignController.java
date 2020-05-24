@@ -1,5 +1,6 @@
 package com.ruoyi.activiti.controller;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -9,6 +10,7 @@ import java.util.Map;
 import com.ruoyi.activiti.domain.BizDesignVo;
 import com.ruoyi.activiti.domain.BizDevelopVo;
 import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.common.utils.file.FileUploadUtils;
 import com.ruoyi.framework.util.ShiroUtils;
 import com.ruoyi.system.domain.SysUser;
 import org.activiti.engine.IdentityService;
@@ -30,6 +32,7 @@ import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.page.TableDataInfo;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -109,8 +112,7 @@ public class BizDesignController extends BaseController
     @Log(title = "美工设计业务", businessType = BusinessType.INSERT)
     @PostMapping("/add")
     @ResponseBody
-    public AjaxResult addSave(BizDesignVo bizDesign)
-    {
+    public AjaxResult addSave(BizDesignVo bizDesign){
         Long userId = ShiroUtils.getUserId();
         if (SysUser.isAdmin(userId)) {
             return error("提交申请失败：不允许管理员提交申请！");
@@ -218,6 +220,69 @@ public class BizDesignController extends BaseController
 
             bizDesignService.complete(designVo, saveEntityBoolean, taskId, variables);
 
+
+            return success("任务已完成");
+        } catch (Exception e) {
+            logger.error("error on complete task {}, variables={}", new Object[]{taskId, variables, e});
+            return error("完成任务失败");
+        }
+    }
+
+
+    /**
+     * 完成任务
+     *
+     * @return
+     */
+    @RequestMapping(value = "/complete1/{taskId}", method = {RequestMethod.POST, RequestMethod.GET})
+    @ResponseBody
+    public AjaxResult complete1(@PathVariable("taskId") String taskId,
+                               @ModelAttribute("preloadDesign") BizDesignVo designVo, HttpServletRequest request,@RequestPart("file") MultipartFile file,
+                               @RequestPart("bizDesign") BizDesignVo bizDesign,
+                                @RequestPart("saveEntity") String saveEntity,@RequestPart("p_B_devLeaderApproved") String p_B_devLeaderApproved,@RequestPart("p_COM_comment") String p_COM_comment) {
+
+        // 上传并返回新文件名称
+        String fileName = null;
+        try {
+            fileName = FileUploadUtils.upload(file);
+        } catch (IOException e) {
+            logger.error("error on add attachment {}, v", new Object[]{file.getName(), e});
+            return error("美工设计任务失败");
+        }
+        designVo.setAttachment(fileName);
+        designVo.setAttachmentName(bizDesign.getAttachmentName());
+        designVo.setId(bizDesign.getId());
+
+        boolean saveEntityBoolean = BooleanUtils.toBoolean(saveEntity);
+        Map<String, Object> variables = new HashMap<String, Object>();
+
+        String comment = null;          // 批注
+        if(StringUtils.isNotBlank(p_COM_comment)) {
+            comment = p_COM_comment;
+            variables.put("comment",comment);
+        }
+
+        Object approved = null;          // 审批意见
+        if(StringUtils.isNotBlank(p_B_devLeaderApproved)) {
+            approved = BooleanUtils.toBoolean(p_B_devLeaderApproved);
+            variables.put("devLeaderApproved",approved);
+        }
+
+
+        try {
+
+            if (StringUtils.isNotEmpty(comment)) {
+                identityService.setAuthenticatedUserId(ShiroUtils.getLoginName());
+                taskService.addComment(taskId, designVo.getInstanceId(), comment);
+            }
+            //设置流程变量产品信息传递到监听器
+            if(saveEntityBoolean){
+                variables.put("sku",designVo.getSku());
+                variables.put("productName",designVo.getProductName());
+                variables.put("title",designVo.getTitle());
+            }
+
+            bizDesignService.complete(designVo, saveEntityBoolean, taskId, variables);
 
             return success("任务已完成");
         } catch (Exception e) {

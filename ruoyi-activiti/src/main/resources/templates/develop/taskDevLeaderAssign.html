@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="zh" xmlns:th="http://www.thymeleaf.org" >
 <head>
-    <th:block th:include="include :: header('销售确认美工设计')" />
+    <th:block th:include="include :: header('产品开发领导审批')" />
     <th:block th:include="include :: datetimepicker-css" />
     <th:block th:include="include :: select2-css" />
 </head>
 <body class="white-bg">
     <div class="wrapper wrapper-content animated fadeInRight ibox-content">
-        <form class="form-horizontal m" id="form-develop-edit" th:object="${bizDesign}">
+        <form class="form-horizontal m" id="form-develop-edit" th:object="${bizDevelop}">
             <input name="id" th:field="*{id}" type="hidden">
             <input name="taskId" th:field="*{taskId}" type="hidden">
             <input name="saveEntity" value="true" type="hidden">
@@ -23,7 +23,7 @@
                 <div class="col-sm-8">
                     <div class="input-group date">
                         <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                        <input name="applyTime" th:value="${#dates.format(bizDesign.applyTime, 'yyyy-MM-dd HH:mm')}" class="form-control" type="text" disabled>
+                        <input name="applyTime" th:value="${#dates.format(bizDevelop.applyTime, 'yyyy-MM-dd HH:mm')}" class="form-control" type="text" disabled>
                     </div>
                 </div>
             </div>
@@ -49,31 +49,50 @@
             </div>
 
             <div class="form-group">
-                <label class="col-sm-3 control-label">图需：</label>
+                <label class="col-sm-3 control-label">卖点：</label>
                 <div class="col-sm-8">
-                    <textarea name="photoNeed" class="form-control" readonly>[[*{photoNeed}]]</textarea>
+                    <textarea name="sellingPoint" class="form-control" readonly>[[*{sellingPoint}]]</textarea>
                 </div>
             </div>
             <div class="form-group">
+                <label class="col-sm-3 control-label">痛点：</label>
+                <div class="col-sm-8">
+                    <textarea name="painPoint" class="form-control" readonly>[[*{painPoint}]]</textarea>
+                </div>
+            </div>
+
+            <div class="form-group">
                 <label class="col-sm-3 control-label">附件：</label>
                 <div class="col-sm-8">
-<!--                    <button type="button" id="select_file"  class="btn btn-primary btn-sm disabled"> 选择附件</button>
-                    <input type="file" id="attachment"  style="display: none;" onchange="setfile_tmp()";>-->
-                    <input type="text" id="attachmentName" readonly="readonly" th:value="${bizDesign.attachmentName}"  style="border: 0px;">
-                    <a class='btn btn-outline-success btn-sm' href="javascript:void(0)"  th:name="${bizDesign.attachment}" id="download">下载</a>
+                    <button type="button" id="select_file"  class="btn btn-primary btn-sm disabled"> 选择附件</button>
+                    <input type="file" id="attachment"  style="display: none;" onchange="setfile_tmp()";>
+                    <input type="text" id="attachmentName" readonly="readonly" th:value="${bizDevelop.attachmentName}"  style="border: 0px;">
+                    <a class='btn btn-outline-success btn-sm' href="javascript:void(0)"  th:name="${bizDevelop.attachment}" id="download">下载</a>
                 </div>
             </div>
 
             <hr />
             <div class="form-group">
-                <label class="col-sm-3 control-label" for="sellerApproved">审批意见：</label>
+                <label class="col-sm-3 control-label" for="devLeaderApproved">审批意见：</label>
                 <div class="col-sm-8">
-                    <select name="p_B_sellerApproved" id="sellerApproved" class="form-control m-b">
+                    <select name="p_B_devLeaderApproved" id="devLeaderApproved" class="form-control m-b">
                         <option value="true">同意</option>
-                        <option value="false">拒绝</option>
+                        <!--<option value="false">拒绝</option>-->
                     </select>
                 </div>
             </div>
+
+            <div class="form-group">
+                <label class="col-sm-3 control-label" for="assignSeller">处理人员：</label>
+                <div class="col-sm-8">
+                    <select name="p_S_assignSeller" id="assignSeller" class="form-control m-b">
+                        <option th:each="dict : ${list}" th:value="${dict.loginName}" th:text="${dict.userName }">
+ <!--                       <option value="true">同意</option>
+                        <option value="false">拒绝</option>-->
+                    </select>
+                </div>
+            </div>
+
             <div class="form-group">
                 <label class="col-sm-3 control-label">批注：</label>
                 <div class="col-sm-8">
@@ -86,7 +105,7 @@
     <th:block th:include="include :: datetimepicker-js" />
     <th:block th:include="include :: select2-js" />
     <script th:inline="javascript">
-        var prefix = ctx + "design";
+        var prefix = ctx + "develop";-
         $("#form-develop-edit").validate({
             focusCleanup: true
         });
@@ -114,6 +133,7 @@
             //alert(value);
             window.location.href = ctx + "common/download/resource?resource=" + value;
         }
+
 
     </script>
 </body>

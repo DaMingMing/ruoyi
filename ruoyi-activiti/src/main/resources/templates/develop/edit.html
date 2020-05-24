@@ -7,7 +7,7 @@
 <body class="white-bg">
     <div class="wrapper wrapper-content animated fadeInRight ibox-content">
         <form class="form-horizontal m" id="form-develop-edit" th:object="${bizDevelop}">
-            <input name="id" th:field="*{id}" type="hidden">
+            <input name="id" th:field="*{id}" type="hidden" id="pk_id">
             <div class="form-group">    
                 <label class="col-sm-3 control-label">标题：</label>
                 <div class="col-sm-8">
@@ -20,12 +20,12 @@
                     <input name="productName" th:field="*{productName}" class="form-control" type="text">
                 </div>
             </div>
-            <div class="form-group">    
+<!--            <div class="form-group">
                 <label class="col-sm-3 control-label">SKU：</label>
                 <div class="col-sm-8">
                     <input name="sku" th:field="*{sku}" class="form-control" type="text">
                 </div>
-            </div>
+            </div>-->
             <div class="form-group">
                 <label class="col-sm-3 control-label">卖点：</label>
                 <div class="col-sm-8">
@@ -38,7 +38,7 @@
                     <textarea name="painPoint" class="form-control">[[*{painPoint}]]</textarea>
                 </div>
             </div>
-            <div class="form-group">    
+<!--            <div class="form-group">
                 <label class="col-sm-3 control-label">流程实例ID：</label>
                 <div class="col-sm-8">
                     <input name="instanceId" th:field="*{instanceId}" class="form-control" type="text">
@@ -49,8 +49,25 @@
                 <div class="col-sm-8">
                     <input name="applyUserName" th:field="*{applyUserName}" class="form-control" type="text">
                 </div>
+            </div>-->
+<!--            <div class="form-group">
+                <label class="col-sm-3 control-label">附件：</label>
+                <div class="col-sm-8">
+&lt;!&ndash;                    <input name="attachment" th:src="*{attachment}" class="form-control" type="file" id="attachment" th:value="*{attachment}">
+                    <a class='btn btn-outline-success btn-sm' href="javascript:void(0)"  th:name="${bizDevelop.attachment}" id="download">下载</a>&ndash;&gt;
+                </div>
+            </div>-->
+            <div class="form-group">
+                <label class="col-sm-3 control-label">附件：</label>
+                <div class="col-sm-8">
+                    <button type="button" id="select_file" onclick="attachment.click();" class="btn btn-primary btn-sm"> 选择附件</button>
+                    <input type="file" id="attachment"  style="display: none;" onchange="setfile_tmp()";>
+                    <input type="text" id="attachmentName" readonly="readonly" th:value="${bizDevelop.attachmentName}" onclick="attachment.click(); " style="border: 0px;">
+                    <a class='btn btn-outline-success btn-sm' href="javascript:void(0)"  th:name="${bizDevelop.attachment}" id="download">下载</a>
+                </div>
             </div>
-            <div class="form-group">    
+
+<!--            <div class="form-group">
                 <label class="col-sm-3 control-label">申请时间：</label>
                 <div class="col-sm-8">
                     <div class="input-group date">
@@ -58,21 +75,97 @@
                         <input name="applyTime" th:value="${#dates.format(bizDevelop.applyTime, 'yyyy-MM-dd')}" class="form-control" placeholder="yyyy-MM-dd" type="text">
                     </div>
                 </div>
-            </div>
+            </div>-->
         </form>
     </div>
     <th:block th:include="include :: footer" />
     <th:block th:include="include :: datetimepicker-js" />
     <script type="text/javascript">
-        var prefix = ctx + "activiti/develop";
+        var prefix = ctx + "develop";
         $("#form-develop-edit").validate({
             focusCleanup: true
         });
 
-        function submitHandler() {
+
+
+        function setfile_tmp(){
+
+/*            var file11 = $("#attachment").val();
+/!*            var arrays1 = file11.split("\\");
+            var name1 = arrays1[arrays1.length-1];
+            name1=name1.toLowerCase();*!/
+            $("#file2").val(file11);*/
+
+            var attachment = $("#attachment").val();
+            //显示上传附件名称（去掉目录）
+            var array = attachment.split("\\");
+            var attachmentName = array[array.length-1];
+            //name1=name1.toLowerCase();
+            $("#attachmentName").val(attachmentName);
+        }
+
+        $("#download").click(function(){
+            console.log($("#download").attr("name"));
+            if($("#download").attr("name") === null || $("#download").attr("name") === ''){
+                $.modal.alertWarning("暂无附件上传");
+                return false;
+            }
+            downloadFile($("#download").attr("name"));
+        });
+
+        function downloadFile(value){
+            alert(ctx + "common/download/resource?resource=" + value);
+            window.location.href = ctx + "common/download/resource?resource=" + value;
+        }
+
+/*        function submitHandler() {
             if ($.validate.form()) {
                 $.operate.save(prefix + "/edit", $('#form-develop-edit').serialize());
             }
+        }*/
+
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                uploadFile();
+            }
+        }
+
+        function uploadFile() {
+            var formData = new FormData();
+            /*            if ($('#attachment')[0].files[0] == null) {
+                            $.modal.alertWarning("请先选择文件路径");
+                            return false;
+                        }*/
+
+            // file 为想要上传的文件
+            formData.append("file", $("#attachment")[0].files[0]);
+            //goodInfo 里面即为想要传到后端的json数据
+            var bizDevelop = JSON.stringify({
+                "id": $('#pk_id').val(),
+                "title": $('#title').val(),
+                "productName": $('#productName').val(),
+                "sellingPoint":$('#sellingPoint').val(),
+                "painPoint": $('#painPoint').val(),
+                "attachmentName":$('#attachmentName').val()
+            });
+            console.log(bizDevelop);
+            formData.append('bizDevelop', new Blob([bizDevelop],{type: "application/json"}));
+
+
+            $.ajax({
+                url: prefix + "/edit",
+                type: 'post',
+                cache: false,
+                data: formData,
+                processData: false,
+                contentType: false,
+                //contentType : "application/json;charset=utf-8",
+                dataType: "json",
+                success: function(result) {
+                    $.operate.successCallback(result);
+                }
+            });
         }
 
         $("input[name='applyTime']").datetimepicker({

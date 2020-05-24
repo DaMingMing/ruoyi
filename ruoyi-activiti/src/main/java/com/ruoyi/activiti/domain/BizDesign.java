@@ -47,6 +47,15 @@ public class BizDesign extends BaseEntity
     @Excel(name = "申请时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date applyTime;
 
+    /** 附件 */
+    @Excel(name = "附件")
+    private String attachment;
+
+
+    /** 附件名称 */
+    @Excel(name = "附件名称")
+    private String attachmentName;
+
     public void setId(Long id) 
     {
         this.id = id;
@@ -118,6 +127,23 @@ public class BizDesign extends BaseEntity
     public Date getApplyTime() 
     {
         return applyTime;
+    }
+
+
+    public String getAttachment() {
+        return attachment;
+    }
+
+    public void setAttachment(String attachment) {
+        this.attachment = attachment;
+    }
+
+    public String getAttachmentName() {
+        return attachmentName;
+    }
+
+    public void setAttachmentName(String attachmentName) {
+        this.attachmentName = attachmentName;
     }
 
     @Override

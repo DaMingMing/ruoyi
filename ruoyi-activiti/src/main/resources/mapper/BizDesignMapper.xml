@@ -17,10 +17,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateTime"    column="update_time"    />
         <result property="applyUser"    column="apply_user"    />
         <result property="applyTime"    column="apply_time"    />
+        <result property="attachment"    column="attachment"    />
+        <result property="attachmentName"    column="attachment_name"    />
     </resultMap>
 
     <sql id="selectBizDesignVo">
-        select id, title, product_name, sku, photo_need, instance_id, create_by, create_time, update_by, update_time, apply_user, apply_time from biz_design
+        select id, title, product_name, sku, photo_need, instance_id, create_by, create_time, update_by, update_time, apply_user, apply_time, attachment, attachment_name from biz_design
     </sql>
 
     <select id="selectBizDesignList" parameterType="BizDesignVo" resultMap="BizDesignResult">
@@ -33,7 +35,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="instanceId != null  and instanceId != ''"> and instance_id = #{instanceId}</if>
             <if test="applyUser != null  and applyUser != ''"> and apply_user = #{applyUser}</if>
             <if test="applyTime != null "> and apply_time = #{applyTime}</if>
+<!--            <if test="attachment != null  and attachment != ''"> and attachment = #{attachment}</if>
+            <if test="attachmentName != null  and attachmentName != ''"> and attachmentName = #{attachmentName}</if>-->
         </where>
+        order  by create_time desc
     </select>
     
     <select id="selectBizDesignById" parameterType="Long" resultMap="BizDesignResult">
@@ -55,6 +60,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null ">update_time,</if>
             <if test="applyUser != null  and applyUser != ''">apply_user,</if>
             <if test="applyTime != null ">apply_time,</if>
+            <if test="attachment != null ">attachment,</if>
+            <if test="attachmentName != null ">attachment_name,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="title != null  and title != ''">#{title},</if>
@@ -68,6 +75,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null ">#{updateTime},</if>
             <if test="applyUser != null  and applyUser != ''">#{applyUser},</if>
             <if test="applyTime != null ">#{applyTime},</if>
+            <if test="attachment != null ">#{attachment},</if>
+            <if test="attachmentName != null ">#{attachmentName},</if>
          </trim>
     </insert>
 
@@ -85,6 +94,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null ">update_time = #{updateTime},</if>
             <if test="applyUser != null  and applyUser != ''">apply_user = #{applyUser},</if>
             <if test="applyTime != null ">apply_time = #{applyTime},</if>
+            <if test="attachment != null and attachment != ''">attachment = #{attachment},</if>
+            <if test="attachmentName != null and attachmentName != ''">attachment_name = #{attachmentName},</if>
         </trim>
         where id = #{id}
     </update>

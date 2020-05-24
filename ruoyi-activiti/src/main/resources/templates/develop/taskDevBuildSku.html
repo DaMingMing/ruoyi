@@ -61,6 +61,16 @@
                 </div>
             </div>
 
+            <div class="form-group">
+                <label class="col-sm-3 control-label">附件：</label>
+                <div class="col-sm-8">
+                    <button type="button" id="select_file"  class="btn btn-primary btn-sm disabled"> 选择附件</button>
+                    <input type="file" id="attachment"  style="display: none;" onchange="setfile_tmp()";>
+                    <input type="text" id="attachmentName" readonly="readonly" th:value="${bizDevelop.attachmentName}"  style="border: 0px;">
+                    <a class='btn btn-outline-success btn-sm' href="javascript:void(0)"  th:name="${bizDevelop.attachment}" id="download">下载</a>
+                </div>
+            </div>
+
             <hr />
             <div class="form-group">
                 <label class="col-sm-3 control-label" for="devLeaderApproved">审批意见：</label>
@@ -97,6 +107,20 @@
                 var taskId = [[${taskId}]];
                 $.operate.save(prefix + "/complete/" + taskId, $('#form-develop-edit').serialize());
             }
+        }
+
+        $("#download").click(function(){
+            console.log($("#download").attr("name"));
+            if($("#download").attr("name") === null || $("#download").attr("name") === ''){
+                $.modal.alertWarning("暂无附件上传");
+                return false;
+            }
+            downloadFile($("#download").attr("name"));
+        });
+
+        function downloadFile(value){
+            //alert(value);
+            window.location.href = ctx + "common/download/resource?resource=" + value;
         }
 
 
